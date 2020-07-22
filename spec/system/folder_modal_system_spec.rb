@@ -30,85 +30,86 @@ describe 'FolderModal', type: :system, js: true do
     expect(dropdown).to be_present
     dropdown.click
 
-    expect(page).to have_link('New Folder')
-    click_link 'New Folder'
+    find('a.dropdown-item', text: 'New Folder', visible: false).click
 
 
     expect(find('.modal-content')).to be_present
     expect(page).to have_text('New Folder')
-    expect(page).to have_button('Save')
+    expect(page).to have_button('Save', visible: false)
 
     expect do
       fill_modal(folder_attrs)
 
-      find('#team-power-select').find('.ember-power-select-trigger').click # Open trigger
-      find_all('ul.ember-power-select-options > li')[0].click
+      find('#team-power-select').find('.ember-power-select-trigger',
+                                      visible: false).click # Open trigger
+      find_all('ul.ember-power-select-options > li', visible: false)[0].click
 
-      click_button 'Save'
+      click_button('Save', visible: false)
+
+      expect(page).to have_selector('div.list-group-root', visible: false)
     end.to change { Folder.count }.by(1)
 
     folder = Folder.find_by(name: folder_attrs[:foldername])
     team = Team.find(folder.team_id)
 
-    visit(team_path(team.id))
+    visit("/teams?team_id=#{folder.team_id}&folder_id=#{folder.id}")
 
     expect_teams_page_with(folder_attrs, team)
 
     # Edit Folder
-    visit(team_path(team.id))
-    expect(page).to have_link(href: "#/teams/#{team.id}/folders/#{folder.id}/edit")
-    click_link(href: "#/teams/#{team.id}/folders/#{folder.id}/edit")
+    visit("/teams/#{folder.team_id}/folders/#{folder.id}")
+    all('img.icon-big-button[alt="edit folder"]')[0].click
 
     expect(find('.modal-content')).to be_present
     expect(page).to have_text('Editing Folder')
-    expect(page).to have_button('Save')
+    expect(page).to have_button('Save', visible: false)
 
     expect_filled_fields_in_modal_with(folder_attrs)
 
     fill_modal(updated_attrs)
-    click_button 'Save'
+    click_button('Save', visible: false)
 
     expect_teams_page_with(updated_attrs, team)
 
-
     # Delete Folder
-    visit(team_path(folder.team_id))
-    expect(page).to have_text("Team #{team.name}")
+
+    visit("/teams?team_id=#{folder.team_id}&folder_id=#{folder.id}")
+    expect(page).to have_text(team.name)
 
     expect do
-      href = team_folder_path(team.id, folder.id)
-      del_button = find(:xpath, "//a[@href='#{href}' and @data-method='delete']")
+      find('a.list-group-item', visible: false, text: team.name).click
+      del_button = all('img.icon-big-button.d-inline[alt="delete folder"]')[0]
       expect(del_button).to be_present
 
-      accept_prompt(wait: 3) do
-        del_button.click
-      end
+      del_button.click
 
-      expect(page).to have_text("Team #{team.name}")
+      click_button('Delete')
+
+      expect(page).to_not have_text folder.name
     end.to change { Folder.count }.by(-1)
 
     logout
-
   end
 
   private
 
   def fill_modal(folder_attrs)
     within('div.modal-content') do
-      fill_in 'name', with: (folder_attrs[:foldername])
-      fill_in 'description', with: folder_attrs[:description]
+      find('input[name="foldername"]').set folder_attrs[:foldername]
+      find('textarea', visible: false).set folder_attrs[:description]
     end
   end
 
   def expect_teams_page_with(folder_attrs, team)
-    expect(page).to have_text("Team #{team.name}")
-    expect(page).to have_text(folder_attrs[:foldername])
-    expect(page).to have_text(folder_attrs[:description])
+    expect(page).to have_text(team.name)
+    find('a.list-group-item', visible: false, text: team.name).click
+    expect(page).to have_css('h6', visible: false, text: folder_attrs[:foldername])
+    expect(page).to have_css('p', visible: false, text: folder_attrs[:description])
   end
 
   def expect_filled_fields_in_modal_with(folder_attrs)
     expect(find_field('name').value).to eq(folder_attrs[:foldername])
-    expect(find('.vertical-resize').value).to eq(folder_attrs[:description])
+    expect(find('textarea', visible: false).value).to eq(folder_attrs[:description])
   end
 
 end

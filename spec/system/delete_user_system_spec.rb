@@ -14,9 +14,10 @@ describe 'DeleteUser', type: :system, js: true do
     login_as_user(:admin)
 
     visit(admin_users_path)
-    expect(page).to have_selector('a.delete_user_link')
 
-    all('a.delete_user_link')[1].click
+    expect(page).to have_selector('a.delete_user_link.action_icon')
+
+    all('a.delete_user_link.action_icon')[1].click
 
     expect(page).to have_selector('#delete_user_button')
     expect(all('#delete_user_button')[0][:disabled]).to eq('true')
@@ -30,12 +31,14 @@ describe 'DeleteUser', type: :system, js: true do
     login_as_user(:admin)
     visit(admin_users_path)
 
-    all('a.delete_user_link')[0].click
+    all('a.delete_user_link.action_icon')[0].click
 
     expect(page).to have_content('Are you sure you want to delete this User?')
 
     expect(all('#delete_user_button')[0][:disabled]).to eq('false')
     all('#delete_user_button')[0].click
-    expect(page).to have_content('Deleted user alice')
+    within(find('table#team_table')) do
+      expect(page).not_to have_content('alice')
+    end
   end
 end

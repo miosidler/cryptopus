@@ -26,6 +26,12 @@ SimpleCov.start 'rails' do
   coverage_dir 'test/coverage'
 end
 
+Capybara.default_max_wait_time = 10
+
+Capybara.register_driver :selenium do |app|
+  Capybara::Selenium::Driver.new(app, browser: :firefox)
+end
+
 RSpec.configure do |config|
 
   config.before(:each, type: :system) do
@@ -33,6 +39,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system, js: true) do
+    page.driver.browser.manage.window.resize_to(1920, 1080)
     driven_by ENV['HEAD'] ? :selenium : :selenium_headless
   end
 

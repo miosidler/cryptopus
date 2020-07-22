@@ -4,17 +4,19 @@ import lookupValidator from "ember-changeset-validations";
 import Changeset from "ember-changeset";
 import { inject as service } from "@ember/service";
 import { tracked } from "@glimmer/tracking";
-import ModalForm from "./modal-form";
+import BaseFormComponent from "./base-form-component";
 import { isPresent } from "@ember/utils";
+import { isEmpty } from "@ember/utils";
 
-export default class AccountForm extends ModalForm {
+export default class AccountForm extends BaseFormComponent {
   @service store;
   @service router;
+  @service navService;
 
   @tracked selectedTeam;
-  @tracked selectedFolder;
   @tracked assignableTeams;
-  @tracked availableFolders;
+
+  @tracked hasErrors;
 
   AccountValidations = AccountValidations;
 
@@ -30,6 +32,10 @@ export default class AccountForm extends ModalForm {
       AccountValidations
     );
 
+    if (this.isNewRecord) {
+      this.presetTeamAndFolder();
+    }
+
     if (this.isNewRecord && isPresent(this.args.folder)) {
       this.changeset.folder = this.args.folder;
     }
@@ -43,12 +49,32 @@ export default class AccountForm extends ModalForm {
     });
   }
 
-  setupModal(element, args) {
-    super.setupModal(element, args);
+  presetTeamAndFolder() {
+    let selectedTeam = this.navService.selectedTeam;
+    let selectedFolder = this.navService.selectedFolder;
+
+    this.selectedTeam = selectedTeam;
+    if (!isEmpty(selectedFolder)) {
+      this.changeset.folder = selectedFolder;
+    }
   }
 
+  get availableFolders() {
+    return isPresent(this.selectedTeam)
+      ? this.store
+          .peekAll("folder")
+          .filter(
+            folder => folder.team.get("id") === this.selectedTeam.get("id")
+          )
+      : [];
+  }
+
+  @action
   abort() {
-    this.router.transitionTo("index");
+    if (this.args.onAbort) {
+      this.args.onAbort();
+      return;
+    }
   }
 
   @action
@@ -65,16 +91,8 @@ export default class AccountForm extends ModalForm {
 
   @action
   setSelectedTeam(selectedTeam) {
-    if (isPresent(selectedTeam)) {
-      this.selectedTeam = selectedTeam;
-
-      this.store
-        .query("folder", { teamId: this.selectedTeam.id })
-        .then(folders => {
-          this.availableFolders = folders;
-          this.setFolder(null);
-        });
-    }
+    this.selectedTeam = selectedTeam;
+    this.setFolder(null);
   }
 
   @action
@@ -88,15 +106,22 @@ export default class AccountForm extends ModalForm {
   }
 
   handleSubmitSuccess(savedRecords) {
-    /* eslint-disable no-undef  */
-    $(this.modalElement).modal("hide");
-    /* eslint-enable no-undef  */
-
+    this.abort();
     if (this.isNewRecord) {
-      window.location.replace("/accounts/" + savedRecords[0].id);
-    } else {
-      let href = window.location.href;
-      window.location.replace(href.substring(0, href.search("#")));
+      this.router.transitionTo("accounts.show", savedRecords[0].id);
+    } else if (
+      !this.isNewRecord &&
+      this.router.currentRouteName === "teams.folders-show"
+    ) {
+      this.router.transitionTo(
+        "teams.folders-show",
+        savedRecords[0].folder.get("team.id"),
+        savedRecords[0].folder.get("id")
+      );
     }
+  }
+
+  handleSubmitError(response) {
+    this.hasErrors = response.errors.length > 0;
   }
 }

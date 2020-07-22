@@ -1,12 +1,14 @@
+import { action } from "@ember/object";
 import TeamValidations from "../validations/team";
 import lookupValidator from "ember-changeset-validations";
 import Changeset from "ember-changeset";
 import { inject as service } from "@ember/service";
-import ModalForm from "./modal-form";
+import BaseFormComponent from "./base-form-component";
 
-export default class AccountForm extends ModalForm {
+export default class AccountForm extends BaseFormComponent {
   @service store;
   @service router;
+  @service navService;
 
   TeamValidations = TeamValidations;
 
@@ -23,12 +25,12 @@ export default class AccountForm extends ModalForm {
     );
   }
 
-  setupModal(element, args) {
-    super.setupModal(element, args)
-  }
-
+  @action
   abort() {
-    this.router.transitionTo("index");
+    if (this.args.onAbort) {
+      this.args.onAbort();
+      return;
+    }
   }
 
   async beforeSubmit() {
@@ -37,15 +39,11 @@ export default class AccountForm extends ModalForm {
   }
 
   handleSubmitSuccess(savedRecords) {
-    /* eslint-disable no-undef  */
-    $(this.modalElement).modal("hide");
-    /* eslint-enable no-undef  */
-
+    this.abort();
     if (this.isNewRecord) {
-      window.location.replace("/teams/" + savedRecords[0].id);
-    } else {
-      let href = window.location.href
-      window.location.replace(href.substring(0, href.search('#')));
+      let team = savedRecords[0];
+      this.navService.availableTeams.pushObject(team);
+      this.router.transitionTo("teams.show", team.id);
     }
   }
 }

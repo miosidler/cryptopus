@@ -23,6 +23,8 @@ fr:
   download: Télécharger
   "yes": Oui
   "no": Non
+  help: Aide
+  version: Version
   forgot_password: Mot de passe oublié?
   logout: Déconnexion
   auto_logout: Déconnexion automatique en
@@ -43,6 +45,11 @@ fr:
   new: Nouveau
   save: Sauvegarder
   close: fermer
+  hi_user: "Salut, "
+  intro: Vous cherchez un mot de passe?
+  select_team: Veuillez sélectionner une équipe ou utiliser la recherche
+  role: Rôle
+  empty: vide
 
   i18n:
     language:
@@ -74,7 +81,7 @@ fr:
         good: Bien
         strong: Fort
     show:
-      title: "Compte: %{account_name}"
+      account: Compte
       last_change: "Dernière mise à jour il ya %{time_ago}"
       attachments: Attachements
       file: Fichier
@@ -163,14 +170,18 @@ fr:
     title: Dossiers
     name: Nom du dossier
     index_menu:
-      create: Créer groupe
+      create: Créer dossier
     edit:
-      title: Modifier le groupe
+      title: Modifier le dossier
     new:
-      title: Nouveau groupe
+      title: Nouveau dossier
     show:
-      move: Déplacer compte à un autre groupe
+      move: Déplacer compte à un autre dossier
       title: "Comptes du dossier %{folder_name} de l'équipe %{team_name}"
+    no_accounts: Pas de comptes
+    tooltips:
+      delete: Supprimer le dossier
+      edit: Modifier le dossier
   file_entries:
     new:
       title: Ajouter un attachement au compte
@@ -225,6 +236,7 @@ fr:
 
   teams:
     title: Équipes
+    none_available: Aucune équipe disponible
     form:
       enabled: Activé
       private: Privé
@@ -234,10 +246,12 @@ fr:
     index:
       title: "Vous êtes membre des équipes suivantes:"
       team: Équipe
+      no_content: Aucun résultat trouvé
+      search: Résultats pour
     edit:
       title: Modifier l'équipe
     new:
-      title: Créer une nouvelle équipe
+      title: Nouvelle équipe
     description:
       private: Administrateurs auront pas accès à votre équipe.
     show:
@@ -248,6 +262,10 @@ fr:
       admins: Admins
     configure:
       title: Adjuster les membres d'équipe et les utilisateurs d'API
+    delete: Supprimer l'équipe
+    favorise: Favoriser l'équipe
+    defavorise: Dé-privilégier l'équipe
+    no_folders: Pas de dossiers
   profile:
     index:
       title: "Profil de %{label}"
@@ -279,6 +297,10 @@ fr:
     api:
       admin:
         users:
+          update:
+            user: "L'utilisateur mis à jour est maintenant un utilisateur"
+            conf_admin: "L'utilisateur mis à jour est maintenant un conf-admin"
+            admin: "L'utilisateur mis à jour est maintenant un admin"
           toggle:
             empowerd: L'usutilisateur a reçu les droits d administrateur
             disempowerd: L'utilisateur a perdu les droits d'administrateur
@@ -305,9 +327,14 @@ fr:
         unlock: "%{username} n'est plus bloqué"
         token:
           renew: "%{username} a été renouvelé, nouveau jeton: %{token}"
-    members:
-      added: "%{username} a été enlevé avec succès à l'équipe"
-      removed: "%{username} a été ajouté avec succès à l'équipe"
+      members:
+        added: Membre de l'équipe a été enlevé avec succès
+        removed: Membre de l'équipe a été ajouté avec succès
+      errors:
+          auth_failed: Échec de l'authentification
+          user_not_logged_in: Utilisateur non connecté
+          invalid_request: Demande non valable
+          record_not_found: Enregistrement non trouvé
     wizard:
       fill_password_fields: S'il vous plaît remplir tous les champs
       paswords_do_not_match: Les mots de passe ne correspondent pas
@@ -340,14 +367,19 @@ fr:
     accounts:
       created: Compte créé avec succès.
       updated: Compte modifiée avec succès.
+      deleted: Compte a été supprimé.
       moved: Le team a été déplacé avec succès.
+      username_copied: Le nom d'utilisateur a été copié
+      password_copied: Le mot de passe a été copié
     application:
       wait: S'il vous plaît attendre jusqu'à ce vos mots de passe a ètè nouveau cryptées.
     folders:
       created: Dossier créé avec succès.
       updated: Dossier modifiée avec succès
+      deleted: Dossier a été supprimé.
     file_entry:
       uploaded: Fichier téléchargé avec succès.
+      deleted: Fichier a été supprimé.
       uploaded_size_to_high: Fichier est trop volumineux pour tèlècharger. (max. 10MB)
       uploaded_filename_is_empty: Le fichier n'a pas été nommé
       uploaded_file_inexistent: Fichier est inexistant
@@ -486,9 +518,40 @@ fr:
     good: Le mot de passe est bon
     strong: Le mot de passe est forte!
 
+  tooltips:
+    all_teams: Tous les équipes
+    favorites: Favoris
+    settings_profile: Paramètres & Profil
+    add_folder: Ajouter un dossier
+    add_account: Ajouter un compte
+    account_details: Montrer détails du compte
+    delete_folder: Supprimer le dossier
+    delete_account: Supprimer le compte
+
   #Pundit
   pundit:
     default: Accès refusé
     team_policy:
       update?: Vous n'êtes pas membre de cette équipe
       destroy?: Seul l'administrateur peut supprimer des équipes
+
+  validations:
+    name:
+      present: Le nom doit être présent
+      too_long: Le nom est trop long
+    description:
+      too_long: La description est trop longue
+    file:
+      present: Le fichier doit être présent
+    team:
+      present: L'équipe être présent
+    folder:
+      present: Le dossier doit être présent
+    accountname:
+      present: Le nom du compte doit être présent
+      too_long: Le nom du compte est trop long
+      duplicate_name: Le compte existe déjà!
+    cleartext username:
+      too_long: Le nom d'utilisateur est trop long
+    cleartext password:
+      too_long: Le mot de passe est trop long

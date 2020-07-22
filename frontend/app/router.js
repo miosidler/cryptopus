@@ -10,6 +10,7 @@ Router.map(function() {
   this.route("accounts", function() {
     this.route("new");
     this.route("edit", { path: "/edit/:id" });
+    this.route("show", { path: "/:id" });
     this.route(
       "file-entries",
       { path: "/:account_id/file-entries" },
@@ -20,12 +21,16 @@ Router.map(function() {
   });
 
   this.route("teams", function() {
+    this.route("index", { path: "/" });
     this.route("new");
+    this.route("show", { path: "/:team_id" });
     this.route("edit", { path: "/:id/edit" });
     this.route("configure", { path: "/:team_id/configure" });
-    this.route("folders", { path: "" }, function() {
-      this.route("new", { path: "/folders/new" });
-      this.route("edit", { path: "/:team_id/folders/:id/edit/" });
-    });
+    this.route("folders-show", { path: "/:team_id/folders/:folder_id" });
+  });
+
+  this.route("folders", function() {
+    this.route("new");
+    this.route("edit", { path: "/:id/edit" });
   });
 });

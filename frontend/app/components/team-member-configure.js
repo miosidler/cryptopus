@@ -1,9 +1,9 @@
 import BaseFormComponent from "./base-form-component";
-import { bind } from "@ember/runloop";
 import { action } from "@ember/object";
 import { inject as service } from "@ember/service";
 import fetch from "fetch";
 import { tracked } from "@glimmer/tracking";
+import ENV from "../config/environment";
 
 export default class TeamMemberConfigureComponent extends BaseFormComponent {
   @service store;
@@ -11,38 +11,59 @@ export default class TeamMemberConfigureComponent extends BaseFormComponent {
 
   @tracked members;
   @tracked candidates;
+  @tracked apiUsers;
 
   constructor() {
     super(...arguments);
-    this.members = this.args.members;
+    this.store.query("teammember", { teamId: this.args.teamId }).then(res => {
+      this.members = res;
+    });
+    this.store
+      .query("team-api-user", {
+        teamId: this.args.teamId
+      })
+      .then(res => {
+        this.apiUsers = res;
+      });
+
     if (this.args.teamId) {
       this.loadCandidates();
     }
   }
 
-  setupModal(element, args) {
-    var context = args[0];
-    context.modalElement = element;
-    /* eslint-disable no-undef  */
-    $(element).on("hidden.bs.modal", bind(context, context.abort));
-    $(element).modal("show");
-    /* eslint-enable no-undef  */
+  get translationKeyPrefix() {
+    return this.intl.locale[0].replace("-", "_");
   }
 
   loadCandidates() {
-    this.candidates = this.store.query("user-human", {
-      teamId: this.args.teamId,
-      candidates: true
-    });
-  }
-
-  abort() {
-    this.router.transitionTo("index");
+    this.store
+      .query("user-human", {
+        teamId: this.args.teamId,
+        candidates: true
+      })
+      .then(res => (this.candidates = res));
   }
 
   handleSubmitSuccess() {
-    this.members = this.store.query("teammember", { teamId: this.args.teamId });
+    this.store
+      .query("teammember", { teamId: this.args.teamId })
+      .then(res => (this.members = res));
     this.loadCandidates();
+  }
+
+  showSuccessMessage() {
+    let successMsg = `${this.translationKeyPrefix}.flashes.api.members.added`;
+    let msg = this.intl.t(successMsg);
+    this.notify.success(msg);
+  }
+
+  @action
+  abort() {
+    if (this.args.onAbort) {
+      this.args.onAbort();
+      return;
+    }
+    this.router.transitionTo("index");
   }
 
   @action
@@ -55,16 +76,20 @@ export default class TeamMemberConfigureComponent extends BaseFormComponent {
   @action
   deleteMember(member) {
     member.teamId = this.args.teamId;
+    let isCurrentUser = +member.user.get("id") === ENV.currentUserId;
     member.destroyRecord().then(() => {
-      if (member.currentUser) {
+      if (isCurrentUser) {
         this.router.transitionTo("index");
         window.location.replace("/teams");
       } else {
-        this.members = this.store.query("teammember", {
-          teamId: this.args.teamId
-        });
+        this.store
+          .query("teammember", { teamId: this.args.teamId })
+          .then(res => (this.members = res));
         this.loadCandidates();
       }
+      let successMsg = `${this.translationKeyPrefix}.flashes.api.members.removed`;
+      let msg = this.intl.t(successMsg);
+      this.notify.success(msg);
     });
   }
 

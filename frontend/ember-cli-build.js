@@ -5,8 +5,19 @@ const EmberApp = require("ember-cli/lib/broccoli/ember-app");
 module.exports = function(defaults) {
   let app = new EmberApp(defaults, {
     storeConfigInMeta: false,
+
+    minifyCSS: {
+      options: { processImport: true }
+    },
+
     'ember-cli-password-strength': {
       bundleZxcvbn: true
+    },
+
+    "ember-bootstrap": {
+      bootstrapVersion: 4,
+      importBootstrapCSS: true,
+      importBootstrapFont: true
     }
   });
 
@@ -22,6 +33,7 @@ module.exports = function(defaults) {
   // modules that you would like to import into your application
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
+  app.import('node_modules/easytimer/dist/easytimer.min.js')
 
   return app.toTree();
 };

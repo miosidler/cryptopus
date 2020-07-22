@@ -44,6 +44,11 @@ de:
   new: Neu
   save: Speichern
   close: Schliessen
+  hi_user: "Hi, "
+  intro: Du suchst ein Passwort?
+  select_team: Wählen Sie bitte ein Team aus oder nutzen Sie die Suche
+  role: Rolle
+  empty: leer
 
   i18n:
     language:
@@ -76,7 +81,7 @@ de:
         good: Gut
         strong: Stark
     show:
-      title: "Account: %{account_name}"
+      account: Account
       last_change: "Letzte Änderung vor %{time_ago}"
       attachments: Anhänge
       file: Datei
@@ -157,7 +162,6 @@ de:
         num_folders: Anzahl Ordner
         num_accounts: Anzahl Accounts
         members: Mitglieder
-
     user_roles:
       user: Benutzer
       conf_admin: Conf Admin
@@ -175,6 +179,11 @@ de:
     show:
       move: Account zu einem anderen Ordner verschieben
       title: "Accounts des Ordners %{folder_name} des Teams %{team_name}"
+    no_accounts: Keine Accounts
+    tooltips:
+      delete: Ordner löschen
+      edit: Ordner bearbeiten
+
   file_entries:
     new:
       title: Anhang zum Account hinzufügen
@@ -194,6 +203,11 @@ de:
         title: Anmelden
         description: Bitte geben Sie Ihren Benutzernamen und Ihr Passwort ein um Cryptopus zu verwenden.
         submit: Anmelden
+    sso:
+      inactive:
+        title: Anmelden
+        submit: Anmelden
+        inactive: Deine Cryptopus session ist inaktiv
     destroy:
       title: Abmelden
       message: Aufwiedersehen
@@ -208,7 +222,12 @@ de:
       new: Neues Passwort
       new_retype: Neues Passwort (wiederholen)
       submit: Ändern
-
+  recrypt:
+    sso:
+      new:
+        notice: Bitte geben Sie Ihr Cryptopus-Passwort ein, um Ihr Konto zu Keycloak zu migrieren.
+        cryptopus_password: Dein Cryptopus Passwort
+        migrate: Migrieren
   teammembers:
     new:
       title: Ein neues Teammitglied hinzufügen
@@ -219,6 +238,7 @@ de:
 
   teams:
     title: Teams
+    none_available: Keine Teams verfügbar
     show:
       title: "Gruppen des Teams %{team_name}"
       folder: Gruppe
@@ -237,14 +257,20 @@ de:
     index:
       title: 'Sie sind Mitglied der folgenden Teams:'
       team: Team
+      no_content: Keine Resultate
+      search: Suchresultate für
     new:
-      title: Neues Team erstellen
+      title: Team erstellen
     edit:
       title: Team bearbeiten
     description:
       private: Admins haben keinen Zugriff wenn angewählt
     configure:
       title: Teammitglieder und Api Nutzer anpassen
+    delete: Team löschen
+    favorise: Team favorisieren
+    defavorise: Team entfavorisieren
+    no_folders: Keine Ordner
 
   profile:
     index:
@@ -277,6 +303,10 @@ de:
     api:
       admin:
         users:
+          update:
+            user: "Aktualisierter Benutzer ist jetzt ein Benutzer"
+            conf_admin: "Aktualisierter Benutzer ist jetzt ein conf-admin"
+            admin: "Aktualisierter Benutzer ist jetzt ein admin"
           toggle:
             empowered: "%{username} hat nun Admin-Rechte"
             disempowered: "Dem Benutzer %{username} wurden die Admin-Rechte entzogen"
@@ -304,8 +334,13 @@ de:
         token:
           renew: "%{username} wurde erneuert, neues Token: %{token}"
       members:
-        added: "%{username} wurde erfolgreich hinzugefügt"
-        removed: "%{username} wurde erfolgreich entfernt"
+        added: Mitglied wurde erfolgreich hinzugefügt
+        removed: Mitglied wurde erfolgreich entfernt
+      errors: 
+        auth_failed: Authentifizierung fehlgeschlagen
+        user_not_logged_in: Benutzer ist nicht eingeloggt
+        invalid_request: Invalide Anfrage
+        record_not_found: Eintrag nicht gefunden
     wizard:
       fill_password_fields: Bitte füllen Sie alle Felder aus
       paswords_do_not_match: Die Passwörter stimmen nicht überein
@@ -338,14 +373,19 @@ de:
     accounts:
       created: Der neue Account wurde erfolgreich erstellt.
       updated: Der Account wurde erfolgreich aktualisiert.
+      deleted: Der Account wurde erfolgreich gelöscht.
       moved: Der Account wurde erfolgreich veschoben
+      username_copied: Benutzername wurde kopiert
+      password_copied: Passwort wurde kopiert
     application:
       wait: Bitte warten Sie, bis  Ihre Team Passwörter neu verschlüsselt wurden.
     folders:
       created: Die neue Gruppe wurde erfolgreich erstellt.
       updated: Die Gruppe wurde erfolgreich bearbeitet.
+      deleted: Die Gruppe wurde erfolgreich gelöscht.
     file_entries:
       uploaded: Die Datei wurde erfolgreich hochgeladen.
+      deleted: Die Datei wurde erfolgreich gelöscht.
       uploaded_size_to_high: Die Datei ist zu gross zum hochladen. (Max. 10MB)
       uploaded_filename_is_empty: Die Datei muss benannt sein
       uploaded_file_inexistent: Datei ist inexistent
@@ -407,7 +447,7 @@ de:
     deleteWithTeams: "Lösche alle Teams in denen %{username} der letze Team Member ist"
 
 
-#Validation Errors
+  #Validation Errors
   activerecord:
     attributes:
       user:
@@ -482,9 +522,40 @@ de:
     good: Das Passwort genügt
     strong: Das Passwort ist stark!
 
+  tooltips:
+    all_teams: Alle Teams
+    favorites: Favoriten
+    settings_profile: Einstellungen & Profil
+    add_folder: Erstelle einen neuen Ordner
+    add_account: Erstelle einen neuen Account
+    account_details: Account Details anzeigen
+    delete_folder: Ordner löschen
+    delete_account: Account löschen
+
   #Pundit
   pundit:
     default: Zugriff verweigert
     team_policy:
       update?:  Du bist nicht Mitglied dieses Teams
       destroy?: Nur Admins dürfen Teams löschen
+
+  validations:
+    name:
+      present: Der Name muss vorhanden sein
+      too_long: Der Name ist zu lang
+    description:
+      too_long: Die Beschreibung ist zu lang
+    file:
+      present: Die Datei muss vorhanden sein
+    team:
+      present: Das Team muss vorhanden sein
+    folder:
+      present: Der Ordner muss vorhanden sein
+    accountname:
+      present: Der Accountname muss vorhanden sein
+      too_long: Der Accountname ist zu lang
+      duplicate_name: Account existiert bereits!
+    cleartext username:
+      too_long: Der Benutzername ist zu lang
+    cleartext password:
+      too_long: Das Passwort ist zu lang

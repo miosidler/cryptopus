@@ -1,0 +1,41 @@
+.folder-header {
+  font-weight: bold;
+  font-size: 18px !important;
+  color: #238bca;
+}
+
+.folder-show-header:first-child {
+  border-radius: 4px 4px 0 0;
+}
+
+.folder-collapse-box {
+  background-color: #ffffff;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  padding: 0 15px 0 15px;
+}
+
+.folder-card-header {
+  background-color: #c7d9e9;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+
+.br-4 {
+  border-radius: 4px!important;
+}
+
+.no-acc {
+  margin-bottom: 12px;
+  margin-top: 12px;
+}
+
+.reduced-padding-for-icons {
+  padding-right: 2px !important;
+}
+
+.margin-for-buttons {
+  margin-left: 4px !important;
+}

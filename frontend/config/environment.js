@@ -4,9 +4,12 @@ module.exports = function(environment) {
   let ENV = {
     modulePrefix: "frontend",
     environment,
-    rootURL: "/app",
-    locationType: "hash",
+    rootURL: "/",
+    locationType: "auto",
     sentryDsn: "",
+    appVersion: undefined,
+    currentUserId: undefined,
+    "changeset-validations": { rawOutput: true },
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build

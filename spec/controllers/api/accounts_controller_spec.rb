@@ -135,13 +135,11 @@ describe Api::AccountsController do
 
       account1_json_attributes = data['attributes']
       account1_json_relationships = data['relationships']
-      folder_attributes = json['included'].first['attributes']
 
       expect(account1_json_attributes['accountname']).to eq 'account1'
       expect(account1_json_attributes['cleartext_username']).to eq 'test'
       expect(account1_json_attributes['cleartext_password']).to eq 'password'
       expect_json_object_includes_keys(account1_json_relationships, nested_models)
-      expect(folder_attributes['name']).to eq 'folder1'
     end
 
     it 'cannot authenticate and does not return decrypted account if recrypt requests pending' do
@@ -152,7 +150,7 @@ describe Api::AccountsController do
 
       get :show, params: { id: account }, xhr: true
 
-      expect(errors).to include 'Wait for the recryption of your users team passwords'
+      expect(errors).to eq(['flashes.recryptrequests.wait'])
       expect(response).to have_http_status 403
     end
 
@@ -160,7 +158,7 @@ describe Api::AccountsController do
       account = accounts(:account1)
       get :show, params: { id: account }, xhr: true
 
-      expect(errors).to include 'User not logged in'
+      expect(errors).to eq(['flashes.api.errors.user_not_logged_in'])
       expect(response).to have_http_status 401
     end
 
@@ -177,13 +175,11 @@ describe Api::AccountsController do
 
         account1_json_attributes = data['attributes']
         account1_json_relationships = data['relationships']
-        folder_attributes = json['included'].first['attributes']
 
         expect(account1_json_attributes['accountname']).to eq 'account1'
         expect(account1_json_attributes['cleartext_username']).to eq 'test'
         expect(account1_json_attributes['cleartext_password']).to eq 'password'
         expect_json_object_includes_keys(account1_json_relationships, nested_models)
-        expect(folder_attributes['name']).to eq 'folder1'
       end
 
       it 'authenticates with valid api user and returns account details with keycloak enabled' do
@@ -199,13 +195,11 @@ describe Api::AccountsController do
 
         account1_json_attributes = data['attributes']
         account1_json_relationships = data['relationships']
-        folder_attributes = json['included'].first['attributes']
 
         expect(account1_json_attributes['accountname']).to eq 'account1'
         expect(account1_json_attributes['cleartext_username']).to eq 'test'
         expect(account1_json_attributes['cleartext_password']).to eq 'password'
         expect_json_object_includes_keys(account1_json_relationships, nested_models)
-        expect(folder_attributes['name']).to eq 'folder1'
       end
 
       it 'authenticates with valid api user and returns account details with ldap enabled' do
@@ -221,13 +215,11 @@ describe Api::AccountsController do
 
         account1_json_attributes = data['attributes']
         account1_json_relationships = data['relationships']
-        folder_attributes = json['included'].first['attributes']
 
         expect(account1_json_attributes['accountname']).to eq 'account1'
         expect(account1_json_attributes['cleartext_username']).to eq 'test'
         expect(account1_json_attributes['cleartext_password']).to eq 'password'
         expect_json_object_includes_keys(account1_json_relationships, nested_models)
-        expect(folder_attributes['name']).to eq 'folder1'
       end
 
       it 'does not authenticate with invalid api token and does not show account details' do
@@ -241,7 +233,7 @@ describe Api::AccountsController do
         account = accounts(:account1)
         get :show, params: { id: account }, xhr: true
 
-        expect(errors).to include 'Authentification failed'
+        expect(errors).to eq(['flashes.api.errors.auth_failed'])
         expect(response).to have_http_status 401
       end
 
@@ -254,7 +246,7 @@ describe Api::AccountsController do
         get :show, params: { id: account }, xhr: true
 
         expect(response).to have_http_status 401
-        expect(errors).to include 'User not logged in'
+        expect(errors).to eq(['flashes.api.errors.user_not_logged_in'])
       end
 
       it 'authenticates and shows account details even if recryptrequests of human user pending' do
@@ -272,14 +264,12 @@ describe Api::AccountsController do
 
         account1_json_attributes = data['attributes']
         account1_json_relationships = data['relationships']
-        folder_attributes = json['included'].first['attributes']
 
         expect(response).to have_http_status(200)
         expect(account1_json_attributes['accountname']).to eq 'account1'
         expect(account1_json_attributes['cleartext_username']).to eq 'test'
         expect(account1_json_attributes['cleartext_password']).to eq 'password'
         expect_json_object_includes_keys(account1_json_relationships, nested_models)
-        expect(folder_attributes['name']).to eq 'folder1'
       end
 
       it 'does not show account details if valid api user not teammember' do
@@ -291,7 +281,7 @@ describe Api::AccountsController do
         account = accounts(:account1)
         get :show, params: { id: account }, xhr: true
 
-        expect(errors).to include 'Access denied'
+        expect(errors).to eq(['flashes.admin.admin.no_access'])
         expect(response).to have_http_status 403
       end
 
@@ -305,14 +295,12 @@ describe Api::AccountsController do
 
         account1_json_attributes = data['attributes']
         account1_json_relationships = data['relationships']
-        folder_attributes = json['included'].first['attributes']
 
         expect(response).to have_http_status(200)
         expect(account1_json_attributes['accountname']).to eq 'account1'
         expect(account1_json_attributes['cleartext_username']).to eq 'test'
         expect(account1_json_attributes['cleartext_password']).to eq 'password'
         expect_json_object_includes_keys(account1_json_relationships, nested_models)
-        expect(folder_attributes['name']).to eq 'folder1'
       end
 
       it 'shows account as human user details if headers valid' do
@@ -323,14 +311,12 @@ describe Api::AccountsController do
 
         account1_json_attributes = data['attributes']
         account1_json_relationships = data['relationships']
-        folder_attributes = json['included'].first['attributes']
 
         expect(response).to have_http_status(200)
         expect(account1_json_attributes['accountname']).to eq 'account1'
         expect(account1_json_attributes['cleartext_username']).to eq 'test'
         expect(account1_json_attributes['cleartext_password']).to eq 'password'
         expect_json_object_includes_keys(account1_json_relationships, nested_models)
-        expect(folder_attributes['name']).to eq 'folder1'
       end
     end
   end
@@ -513,7 +499,7 @@ describe Api::AccountsController do
 
       post :create, params: new_account_params, xhr: true
 
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(201)
       expect(data['attributes']['accountname']).to eq 'New Account'
     end
 
@@ -542,6 +528,34 @@ describe Api::AccountsController do
       post :create, params: new_account_params, xhr: true
 
       expect(response).to have_http_status(403)
+    end
+
+    context 'DELETE destroy' do
+      it 'cant destroy an account if not in team' do
+        login_as(:alice)
+
+        alice = users(:alice)
+        team2 = teams(:team2)
+        account = team2.folders.first.accounts.first
+
+        expect(team2.teammember?(alice)).to eq false
+
+        expect do
+          delete :destroy, params: { id: account.id, folder_id: account.folder.id,
+                                     team_id: account.folder.team.id }
+        end.to change { Account.count }.by(0)
+      end
+
+      it 'can destroy an account if human user is in his team' do
+        account = accounts(:account1)
+
+        login_as(:bob)
+
+        expect do
+          delete :destroy, params: { id: account.id, folder_id: account.folder.id,
+                                     team_id: account.folder.team.id }
+        end.to change { Account.count }.by(-1)
+      end
     end
   end
 

@@ -11,10 +11,6 @@
     %meta{content: "IE=edge", "http-equiv" => "X-UA-Compatible"}/
     %meta{content: "width=device-width, initial-scale=1", name: "viewport"}/
     %link{href: "/favicon.png", rel: "shortcut icon", type: "image/png"}/
-    %link{href: "http://localhost:4200/app/assets/vendor.css", media: "all", rel: "stylesheet"}
-    %link{href: "http://localhost:4200/app/assets/frontend.css", media: "all", rel: "stylesheet"}
-    %script{src: "http://localhost:4200/app/assets/vendor.js", defer: "true"}
-    %script{src: "http://localhost:4200/app/assets/frontend.js", defer: "true"}
     = csrf_meta_tags
     %title Cryptopus
     = stylesheet_link_tag :application, media: "all", nonce: true
@@ -22,10 +18,12 @@
     = javascript_pack_tag 'stylesheets', nonce: true
     = javascript_pack_tag 'application', 'data-turbolinks-track': :reload, nonce: true
   %body{"data-locale" => I18n.locale}
-    #ember
     = render 'layouts/icons'
-    .container.main{role: "main"}
-      = render 'layouts/navigation'
-      = render 'layouts/flashes'
-      = yield
+    = render 'layouts/navigation'
+    #ember.wrapper
+    #content.content
+      .main{role: "main"}
+        .container-fluid
+          = render 'layouts/flashes'
+          = yield
     = render 'layouts/footer' if current_user

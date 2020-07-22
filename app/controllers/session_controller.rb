@@ -18,6 +18,8 @@ class SessionController < ApplicationController
   before_action :skip_authorization, only: [:create, :new, :destroy, :sso]
   before_action :keycloak_cookie, only: :sso
 
+  layout false
+
   def create
     unless user_authenticator.authenticate!
       flash[:error] = t('flashes.session.auth_failed')
@@ -28,7 +30,6 @@ class SessionController < ApplicationController
       return redirect_to user_authenticator.recrypt_path
     end
 
-    last_login_message
     check_password_strength
     redirect_after_sucessful_login
   end
@@ -51,7 +52,7 @@ class SessionController < ApplicationController
       current_user.update_password(params[:old_password],
                                    params[:new_password1])
       flash[:notice] = t('flashes.session.new_password_set')
-      redirect_to teams_path
+      redirect_to root_path
     else
       render :show_update_password
     end
@@ -95,7 +96,7 @@ class SessionController < ApplicationController
   end
 
   def redirect_after_sucessful_login
-    jump_to = session[:jumpto] || search_path
+    jump_to = session[:jumpto] || root_path
     session[:jumpto] = nil
     redirect_to jump_to
   end

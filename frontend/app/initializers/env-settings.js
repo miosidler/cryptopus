@@ -6,8 +6,12 @@ export function initialize(/* application */) {
     $.getJSON({
       url: "/api/env_settings",
       async: false,
-      success: function (envSettings) {
+      success: function(envSettings) {
         ENV.sentryDsn = envSettings.sentry;
+        ENV.currentUserId = envSettings.current_user.id;
+        ENV.currentUserGivenname = envSettings.current_user.givenname;
+        ENV.preferredLocale = envSettings.current_user.preferred_locale;
+        ENV.appVersion = envSettings.version;
       }
     });
     /* eslint-enable no-undef  */

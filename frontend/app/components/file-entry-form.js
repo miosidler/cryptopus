@@ -4,7 +4,6 @@ import lookupValidator from "ember-changeset-validations";
 import Changeset from "ember-changeset";
 import { action } from "@ember/object";
 import { inject as service } from "@ember/service";
-import { bind } from "@ember/runloop";
 import { tracked } from "@glimmer/tracking";
 
 export default class FileEntryForm extends BaseFormComponent {
@@ -35,18 +34,13 @@ export default class FileEntryForm extends BaseFormComponent {
     this.changeset.csrfToken = token;
   }
 
-  setupModal(element, args) {
-    var context = args[0];
-    context.modalElement = element;
-    /* eslint-disable no-undef  */
-    $(element).on("hidden.bs.modal", bind(context, context.abort));
-    $(element).modal("show");
-    /* eslint-enable no-undef  */
-  }
-
+  @action
   abort() {
-    this.router.transitionTo("index");
     this.fileQueue.flush();
+    if (this.args.onAbort) {
+      this.args.onAbort();
+      return;
+    }
   }
 
   async beforeSubmit() {
@@ -54,17 +48,21 @@ export default class FileEntryForm extends BaseFormComponent {
     return this.changeset.isValid;
   }
 
-  handleSubmitSuccess() {
-    /* eslint-disable no-undef  */
-    $(this.modalElement).modal("hide");
-    /* eslint-enable no-undef  */
+  showSuccessMessage() {
+    let translationKeyPrefix = this.intl.locale[0].replace("-", "_");
+    let successMsg = `${translationKeyPrefix}.flashes.file_entries.uploaded`;
+    let msg = this.intl.t(successMsg);
+    this.notify.success(msg);
+  }
 
-    window.location.replace(`/accounts/${this.changeset.account.get("id")}`);
+  handleSubmitSuccess() {
+    this.abort();
   }
 
   handleSubmitError(response) {
     this.errors = JSON.parse(response.body).errors;
     this.changeset.file = null;
+    this.record.account = null;
   }
 
   @action

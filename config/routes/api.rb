@@ -7,8 +7,10 @@ Rails.application.routes.draw do
 
     get 'env_settings', to: 'env_settings#index'
 
-    resources :accounts, except: [:new, :edit, :destroy] do
-      resources :file_entries, only: [:create]
+    patch 'locale', to: 'locale#update'
+
+    resources :accounts, except: [:new, :edit] do
+      resources :file_entries, only: [:create, :index, :destroy, :show]
     end
 
     resources :api_users, except: [:new, :edit] do
@@ -42,10 +44,10 @@ Rails.application.routes.draw do
         resources :last_member_teams, only: [:index], module: 'teams'
       end
 
-      resources :folders, except: [:new, :edit, :destroy]
-
+      resources :folders, except: [:new, :edit]
       resources :api_users, only: [:create, :destroy, :index], module: 'teams'
       resources :members, except: [:new, :edit], module: 'teams'
+      resource :favourite, only: [:create, :destroy], module: 'teams', controller: 'favourite'
       resources :candidates, only:[:index], module: 'teams'
     end
   end

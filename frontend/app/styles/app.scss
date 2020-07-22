@@ -1,0 +1,318 @@
+$navbar-dark-brand-color: white;
+$navbar-dark-brand-hover-color: $navbar-dark-brand-color;
+
+@import "ember-bootstrap/bootstrap";
+@import "pod-styles";
+@import "secret-input";
+
+@import "ember-power-select/themes/bootstrap";
+
+@import "ember-power-select";
+
+@import "footer";
+@import "nav-bar";
+@import "side-nav-bar";
+@import "account-card-show";
+@import "account-show";
+@import "password-strength-meter";
+@import "folder-show";
+@import "power-select";
+@import "background-colors";
+
+.content {
+  width: 66.6%;
+  margin: 0 auto;
+}
+
+.w-250 {
+  width: 250px;
+}
+
+.d-inline {
+  display: inline !important;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.float-right {
+  float: right !important;
+}
+
+.pt-10 {
+  padding-top: 10%;
+}
+
+.pt-10 {
+  padding-top: 10%;
+}
+.p-15px {
+  padding: 15px;
+}
+
+.m-4 {
+  margin: 4%;
+}
+
+.mt-1 {
+  margin-top: 1%;
+}
+
+.ml-2 {
+  margin-left: 2%;
+}
+.ml-5 {
+  margin-left: 5%;
+}
+
+.ml-270px {
+  margin-left: 270px !important;
+}
+
+.mb-2 {
+  margin-bottom: 2%;
+}
+.mb-2 {
+  margin-bottom: 2%;
+}
+.mb-10 {
+  margin-bottom: 10px;
+}
+.mb-5 {
+  margin-bottom: 5px;
+}
+
+.w-4 {
+  width: 4% !important;
+}
+
+.w-20 {
+  width: 20% !important;
+}
+.w-30 {
+  width: 30% !important;
+}
+
+.columns li.ember-power-select-option {
+  width: 100%;
+}
+
+.x-toggle-component {
+  width: 20%;
+}
+
+[role="button"] {
+  cursor: pointer;
+}
+
+li a {
+  cursor: pointer;
+}
+
+.logo-icon {
+  height: 40px;
+}
+
+.puzzle-icon {
+  height: 35px;
+}
+
+.mb-5-folder {
+  margin-bottom: 5px !important;
+}
+
+.ml-5 {
+  margin-left: 5%;
+}
+
+.mt-32 {
+  margin-top: 32px;
+}
+
+.ml-15 {
+  margin-left: 15px;
+}
+
+.ml-254 {
+  margin-left: 254px !important;
+}
+.ml-238 {
+  margin-left: 238px !important;
+}
+.mt-60 {
+  margin-top: 54px !important;
+}
+
+/* Validation-errors */
+.validation-errors {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 90%;
+  font-weight: bold;
+  color: #dc3545;
+}
+
+.invalid-input-name > input {
+  border: 1px solid red !important;
+}
+
+.invalid-input > textarea {
+  border: 1px solid red !important;
+}
+
+.invalid-input-ps > div:nth-of-type(1) {
+  border: 1px solid red !important;
+}
+
+.ember-power-select-trigger {
+  height: 38px;
+  line-height: 2.1;
+}
+
+.vertical-resize {
+  resize: vertical;
+}
+
+.icon-big-button {
+  width: 25px !important;
+  height: 25px !important;
+  display: inline;
+}
+
+.icon-medium-button {
+  width: 20px !important;
+  height: 20px !important;
+  display: inline;
+}
+
+.default_button {
+  padding: 6px;
+  border: 1px solid #c9c9c9;
+  width: 45px;
+  background-color: #ebe3df;
+  margin-left: 6px;
+}
+
+.icon-button {
+  width: 18px !important;
+  height: 18px !important;
+  display: inline;
+}
+
+.icon-folder {
+  width: 22px !important;
+  height: 22px !important;
+  display: inline;
+}
+
+.icon-button-angle {
+  width: 18px !important;
+  height: 18px !important;
+  display: inline;
+  margin-top: 4px;
+}
+
+.info-icon:hover {
+  cursor: help;
+}
+
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+  background-color: #2988bc !important;
+  border-color: #2479a7 !important;
+}
+
+.vertical-center {
+  min-height: 92px;
+  display: flex;
+}
+
+.modal-alert {
+  width: 100% !important;
+  margin-bottom: 15px !important;
+}
+
+.border-darker {
+  border-color: #b1b4b8 !important;
+}
+
+.team-card-header {
+  /*height: 47.5px !important;
+  padding-top: 5px !important;*/
+  background-color: #1b8dc6;
+  color: white !important;
+  border: none;
+}
+
+.ember-notify-default.ember-notify-cn {
+  bottom: 3em !important;
+}
+
+.ember-basic-dropdown .ember-basic-dropdown-trigger {
+  padding-top: 3px;
+}
+
+.dropdown-toggle-hided::after {
+  display: none;
+}
+
+.helper {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.p-15 {
+  padding: 15px 15px 15px 15px !important;
+}
+
+.description {
+  overflow: auto;
+}
+
+.folder-no-p {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.border-radius-4 {
+  border-radius: 4px
+}
+
+#locale-dropdown > div {
+  width: 120px;
+  border: none !important;
+  color: #727679;
+  background-color: #eaf1f7;
+}
+
+.pl-none {
+  padding-left: 0 !important;
+}
+
+.search-badge {
+  padding: 5px 10px 3px 8px !important;
+  margin-left: 10px;
+}
+
+.columns li {
+  width: 32%;
+  display: inline-block;
+  padding: 3px;
+  padding-left: 8px;
+  padding-top: 5px;
+  margin-bottom: 4px;
+  border-top: 1px solid #dddddd;
+  border-bottom: 1px solid #dddddd;
+  background-color: #f5f5f5;
+}

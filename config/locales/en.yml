@@ -43,6 +43,10 @@ en:
   new: New
   save: Save
   close: Close
+  hi_user: "Hi,"
+  intro: Looking for a password?
+  role: Role
+  empty: empty
 
   i18n:
     language:
@@ -75,7 +79,7 @@ en:
         good: Good
         strong: Strong
     show:
-      title: "Account: %{account_name}"
+      account: Account
       last_change: "Last change was %{time_ago} ago"
       attachments: Attachments
       file: File
@@ -173,6 +177,10 @@ en:
     show:
       move: Move account to other folder
       title: "Accounts in folder %{folder_name} for team %{team_name}"
+    no_accounts: No Accounts
+    tooltips:
+      delete: Delete the folder
+      edit: Edit the folder
   file_entries:
     new:
       title: Add new attachment to account
@@ -227,6 +235,7 @@ en:
 
   teams:
     title: Teams
+    none_available: No Teams available
     form:
       enabled: Enabled
       private: Private
@@ -239,6 +248,8 @@ en:
     index:
       title: "You are member of the following teams:"
       team: Team
+      no_content: No matches
+      search: Search results for
     new:
       title: New Team
     edit:
@@ -253,6 +264,10 @@ en:
       admins: Admins
     configure:
       title: Edit Team Members and Api Users
+    delete: Delete the team
+    favorise: Favorise the team
+    defavorise: Defavorise the team
+    no_folders: No Folders
   profile:
     index:
       title: "Profile of %{label}"
@@ -285,9 +300,9 @@ en:
       admin:
         users:
           update:
-            user: "%{username} is now a user"
-            conf_admin: "%{username} is now an conf-admin"
-            admin: "%{username} is now an admin"
+            user: "Updated User is now a user"
+            conf_admin: "Updated User is now an conf-admin"
+            admin: "Updated User is now an admin"
           destroy:
             own_user: "You can't delete yourself"
             success: "Deleted user %{username}"
@@ -313,8 +328,13 @@ en:
         token:
           renew: "Renewed %{username}, new token: %{token}"
       members:
-        removed: "%{username} was successfully removed from team"
-        added: "%{username} was successfully added to team"
+        removed: Member was successfully removed
+        added: Member was successfully added
+      errors:
+        auth_failed: Authentication failed
+        user_not_logged_in: User not logged in
+        invalid_request: Invalid Request
+        record_not_found: Record not found
     wizard:
       fill_password_fields: Please provide an initial password
       paswords_do_not_match: Passwords do not match
@@ -347,13 +367,18 @@ en:
     accounts:
       created: Account was successfully created.
       updated: Account was successfully updated.
+      deleted: Account was successfully deleted
       moved: Account was successfully moved
+      username_copied: Username was copied
+      password_copied: Password was copied
     application:
       wait: Wait for the recryption of your team passwords.
     folders:
       created: Successfully created a new folder.
       updated: Folder was successfully updated.
+      deleted: Folder was successfully deleted
     file_entries:
+      deleted: Attachment was successfully deleted
       uploaded: File was successfully uploaded.
       uploaded_size_to_high: The file is too big to upload. (max. 10MB)
       uploaded_filename_is_empty: The file has to be named
@@ -412,6 +437,17 @@ en:
     good: The password is good
     strong: The password is strong!
 
+  tooltips:
+    all_teams: All Teams
+    favorites: Favorites
+    settings_profile: Settings & Profile
+    add_folder: Add a new Folder
+    add_account: Add a new Account
+    account_details: Show Account Details
+    delete_folder: Delete the Folder
+    delete_account: Delete the Account
+
+
   #Pundit
   pundit:
     default: Access denied
@@ -425,3 +461,24 @@ en:
       team:
         name: Name
         description: Description
+
+  validations:
+    name:
+      present: Name must be present
+      too_long: Name is too long
+    description:
+      too_long: Description is too long
+    file:
+      present: File must be present
+    team:
+      present: Team must be present
+    folder:
+      present: Folder must be present
+    accountname:
+      present: Accountname must be present
+      too_long: Accountname is too long
+      duplicate_name: Accountname exists already
+    cleartext username:
+      too_long: Username is too long
+    cleartext password:
+      too_long: Password is too long

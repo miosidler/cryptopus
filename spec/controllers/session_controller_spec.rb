@@ -32,7 +32,7 @@ describe SessionController do
       login_as(:bob)
       get :show_update_password
 
-      expect(response).to redirect_to teams_path
+      expect(response).to redirect_to root_path
     end
   end
 
@@ -136,8 +136,6 @@ describe SessionController do
       user.update!(last_login_at: '2017-01-01 16:00:00 + 0000', last_login_from: '192.168.210.10')
 
       post :create, params: { password: 'password', username: 'bob' }
-      expect(flash[:notice]).to eq 'The last login was on January 01, ' \
-                                   '2017 16:00 from 192.168.210.10'
     end
 
     it 'does not show last login date if not available' do
@@ -151,23 +149,6 @@ describe SessionController do
       user.update!(last_login_at: '2017-01-01 16:00:00 + 0000', last_login_from: nil)
 
       post :create, params: { password: 'password', username: 'bob' }
-      expect(flash[:notice]).to eq 'The last login was on January 01, 2017 16:00'
-    end
-
-    it 'shows previous login ip and country' do
-      geo_ip = double
-      expect(geo_ip).to receive(:country_code).at_least(:once).and_return('JP')
-      expect(GeoIp).to receive(:activated?).at_least(:once).and_return(true)
-      expect_any_instance_of(Flash::LastLoginMessage)
-        .to receive(:geo_ip)
-        .at_least(:once).and_return(geo_ip)
-
-      user = users(:bob)
-      user.update!(last_login_at: '2001-09-11 19:00:00 + 0000', last_login_from: '153.123.34.34')
-
-      post :create, params: { password: 'password', username: 'bob' }
-      expect(flash[:notice]).to eq 'The last login was on September 11, ' \
-                                   '2001 19:00 from 153.123.34.34 (JP)'
     end
   end
 
@@ -204,7 +185,7 @@ describe SessionController do
       login_as(:bob)
       post :update_password, params: { old_password: 'password', new_password1: 'test',
                                        new_password2: 'test' }
-      expect(response).to redirect_to teams_path
+      expect(response).to redirect_to root_path
     end
 
     it 'redirects if keycloak user tries to update password' do
@@ -212,7 +193,7 @@ describe SessionController do
       login_as(:bob)
       post :update_password, params: { old_password: 'password', new_password1: 'test',
                                        new_password2: 'test' }
-      expect(response).to redirect_to teams_path
+      expect(response).to redirect_to root_path
     end
   end
 end
