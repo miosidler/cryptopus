@@ -107,9 +107,9 @@ class User::Human < User
     end
   end
 
-  def recrypt_private_key!(new_password, old_password, cookies = nil)
+  def recrypt_private_key!(new_password, old_password)
     return false if keycloak?
-    return unauthorized unless user_authenticator(new_password, cookies).authenticate!
+    return unauthorized unless user_authenticator(new_password).authenticate!
 
     return save! if preform_private_key_recryption!(new_password, old_password)
 
@@ -210,7 +210,7 @@ class User::Human < User
     end
   end
 
-  def user_authenticator(password, cookies = nil)
-    Authentication::UserAuthenticator.init(username: username, password: password, cookies: cookies)
+  def user_authenticator(password)
+    Authentication::UserAuthenticator.init(username: username, password: password)
   end
 end

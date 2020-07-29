@@ -10,10 +10,12 @@ require 'rails_helper'
 describe 'Keycloak user login' do
   include IntegrationHelpers::DefaultHelper
 
+  let(:token_ben) { Rails.root.join('spec/fixtures/files/auth/keycloak_token_ben.json').read }
+  let(:token_bob) { Rails.root.join('spec/fixtures/files/auth/keycloak_token_bob.json').read }
+
   it 'logins as new keycloak user' do
     enable_keycloak
     Rails.application.reload_routes!
-    pk_secret_base = SecureRandom.base64(32)
     # Mock
     expect(Keycloak::Client)
       .to receive(:url_login_redirect)
@@ -24,29 +26,11 @@ describe 'Keycloak user login' do
       .to receive(:get_token_by_code)
       .at_least(:once)
       .with('asd', sso_url)
-      .and_return(token)
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('sub', 'token')
+      .and_return(token_ben)
+    expect(Keycloak::Client)
+      .to receive(:user_signed_in?)
       .at_least(:once)
-      .and_return('asdQW123-asdQWE')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('preferred_username', 'token')
-      .exactly(4).times
-      .and_return('ben')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('given_name', 'token')
-      .at_least(:once)
-      .and_return('Ben')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('family_name', 'token')
-      .at_least(:once)
-      .and_return('Meier')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('pk_secret_base', 'token')
-      .at_least(:once)
-      .and_return(pk_secret_base)
-    expect(Keycloak::Client).to receive(:user_signed_in?)
-      .and_return(false, true, true, true)
+      .and_return(true)
 
     # login
     expect do
@@ -56,21 +40,11 @@ describe 'Keycloak user login' do
       follow_redirect!
       expect(request.fullpath).to eq('/session/sso?code=asd')
       follow_redirect!
-      follow_redirect!
       user = User.find_by(username: 'ben')
       expect(request.fullpath).to eq(root_path)
       expect(user.surname).to eq('Meier')
       expect(user.givenname).to eq('Ben')
       expect(session[:username]).to eq('ben')
     end.to change { User::Human.count }.by(1)
-  end
-
-  private
-
-  def token
-    { access_token: 'token',
-      expires_in: 300,
-      refresh_expires_in: 1800,
-      refresh_token: 'refresh_token' }.to_json
   end
 end

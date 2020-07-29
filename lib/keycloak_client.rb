@@ -3,16 +3,16 @@
 class KeycloakClient
 
   def user_pk_secret(secret = nil, access_token = nil)
-    pk_secret_base = secret || Keycloak::Client.get_attribute('pk_secret_base', access_token)
+    pk_secret_base = secret || token.pk_secret_base
     return if pk_secret_base.nil?
 
     Digest::SHA512.hexdigest(secret_key_base + pk_secret_base)
   end
 
   def find_or_create_pk_secret_base(access_token)
-    return create_pk_secret_base(cookies) if access_token.nil?
+    # return create_pk_secret_base(cookies) if access_token.nil?
 
-    pk_secret_base = Keycloak::Client.get_attribute('pk_secret_base', access_token)
+    pk_secret_base = token.pk_secret_base
 
     pk_secret_base || create_pk_secret_base(access_token)
   end
@@ -20,7 +20,7 @@ class KeycloakClient
   private
 
   def create_pk_secret_base(access_token)
-    user_id = Keycloak::Client.get_attribute('sub', access_token)
+    user_id = token.provider_uid
     pk_secret_base = SecureRandom.base64(32)
     token = JSON.parse(Keycloak::Client.get_token_by_client_credentials)['access_token']
     user_attributes = JSON.parse(Keycloak::Admin.get_user(user_id, token))['attributes'] || {}
@@ -33,4 +33,9 @@ class KeycloakClient
     Rails.application.secrets.secret_key_base
   end
 
+  def token
+    return if Current.token.nil?
+
+    Keycloak::Token.new(Current.token.raw)
+  end
 end

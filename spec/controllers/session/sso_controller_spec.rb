@@ -5,37 +5,22 @@ require 'rails_helper'
 describe Session::SsoController do
   include ControllerHelpers
 
+  let(:token_ben) { Rails.root.join('spec/fixtures/files/auth/keycloak_token_ben.json').read }
+  let(:token_bob) { Rails.root.join('spec/fixtures/files/auth/keycloak_token_bob.json').read }
+
   context 'GET sso' do
+
     it 'logs in User with Keycloak' do
       enable_keycloak
       Rails.application.reload_routes!
 
       expect(Keycloak::Client).to receive(:get_token_by_code)
-        .and_return('{ "access_token": "asd" }')
+        .and_return(token_ben)
         .at_least(:once)
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('pk_secret_base', 'asd')
-        .and_return('')
+      expect(Keycloak::Client)
+        .to receive(:user_signed_in?)
         .at_least(:once)
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('preferred_username', 'asd')
-        .and_return('ben')
-        .at_least(:once)
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('given_name', 'asd')
-        .and_return('Ben')
-        .at_least(:once)
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('family_name', 'asd')
-        .and_return('Meier')
-        .at_least(:once)
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('sub', 'asd')
-        .and_return('1234')
-        .at_least(:once)
-      expect(Keycloak::Client).to receive(:user_signed_in?)
         .and_return(true)
-        .at_least(:once)
 
       get :create, params: { code: 'asd' }
       expect(response).to redirect_to root_path
@@ -49,19 +34,10 @@ describe Session::SsoController do
       enable_keycloak
       Rails.application.reload_routes!
 
-      expect(Keycloak::Client)
-        .to receive(:get_token_by_code)
-        .and_return('{ "access_token": "asd" }')
-      expect(Keycloak::Client)
-        .to receive(:user_signed_in?)
-        .and_return(false)
-      expect(Keycloak::Client)
-        .to receive(:url_login_redirect)
-        .with('http://www.example.com' + sso_path, 'code')
-        .and_return(sso_path)
-        .at_least(:once)
-      get :create, params: { code: 'asd' }
-      expect(response).to redirect_to sso_path
+      expect_any_instance_of(Authentication::UserAuthenticator::Sso)
+        .to receive(:keycloak_login).and_return(sso_path)
+
+      get :create
     end
 
     it 'redirects to normal login if keycloak disabled' do
@@ -77,20 +53,12 @@ describe Session::SsoController do
       Rails.application.reload_routes!
 
       expect(Keycloak::Client)
-        .to receive(:user_signed_in?)
-        .and_return(true)
-        .at_least(:once)
-      expect(Keycloak::Client)
         .to receive(:get_token_by_code)
-        .and_return('{ "access_token": "asd" }')
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('preferred_username', 'asd')
-        .and_return('bob')
+        .and_return(token_bob)
+      expect(Keycloak::Client)
+        .to receive(:user_signed_in?)
         .at_least(:once)
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('pk_secret_base', 'asd')
-        .and_return('')
-        .at_least(:once)
+        .and_return(true)
 
       get :create, params: { code: 'asd' }
 

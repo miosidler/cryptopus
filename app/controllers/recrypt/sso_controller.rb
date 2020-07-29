@@ -31,7 +31,7 @@ class Recrypt::SsoController < ApplicationController
   private
 
   def recrypt_private_key(new_password)
-    if current_user.recrypt_private_key!(new_password, params[:old_password], cookies)
+    if current_user.recrypt_private_key!(new_password, params[:old_password])
       current_user.update!(auth: 'keycloak', password: nil)
 
       reset_session_before_redirect
@@ -51,15 +51,12 @@ class Recrypt::SsoController < ApplicationController
   def user_authenticator
     Authentication::UserAuthenticator.init(
       username: current_user.username,
-      password: params[:new_password],
-      cookies: cookies
+      password: params[:new_password]
     )
   end
 
   def access_token
-    return if cookies.nil? || cookies['keycloak_token'].nil?
-
-    JSON.parse(cookies['keycloak_token']).try(:[], 'access_token')
+    Current.token.raw['access_token']
   end
 
   def keycloak_client

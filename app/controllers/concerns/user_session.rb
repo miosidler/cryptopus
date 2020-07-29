@@ -10,6 +10,7 @@ module UserSession
 
   included do
     helper_method :current_user
+    before_action :set_current
     before_action :redirect_if_no_private_key
     before_action :validate_user, except: :wizard
   end
@@ -19,6 +20,12 @@ module UserSession
     unless user_authenticator.user_logged_in?(session)
       session[:jumpto] = request.fullpath
       redirect_to user_authenticator.login_path
+    end
+  end
+
+  def set_current
+    if cookies[:keycloak_token]
+      Current.token = Keycloak::Token.new(JSON.parse(cookies[:keycloak_token]))
     end
   end
 
@@ -45,7 +52,7 @@ module UserSession
 
   def user_authenticator
     Authentication::UserAuthenticator.init(
-      username: params['username'], password: params['password'], cookies: cookies
+      username: params['username'], password: params['password']
     )
   end
 

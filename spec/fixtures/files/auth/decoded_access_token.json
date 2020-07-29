@@ -1,0 +1,36 @@
+{
+  "jti": "181f27b6-63a2-44f3-b829-bd3a8525bf6b",
+  "exp": 1596110328,
+  "nbf": 0,
+  "iat": 1596110028,
+  "iss": "http://keycloak:8180/auth/realms/cryptopus",
+  "aud": "account",
+  "sub": "1f093eb6-a09a-4945-b0b4-d1ecec781a5f",
+  "typ": "Bearer",
+  "azp": "cryptopus",
+  "auth_time": 0,
+  "session_state": "a7e86bc2-f7de-4598-9be4-99609a5ff2d3",
+  "acr": "1",
+  "realm_access": {
+    "roles": [
+      "offline_access",
+      "uma_authorization"
+    ]
+  },
+  "resource_access": {
+    "account": {
+      "roles": [
+        "manage-account",
+        "manage-account-links",
+        "view-profile"
+      ]
+    }
+  },
+  "scope": "openid profile email",
+  "email_verified": false,
+  "pk_secret_base": "w0iCpFju/sJVd2BVf2M1TvUUuY1YwCWMG5quD0XEG20=",
+  "name": "Bob Muster",
+  "preferred_username": "bob",
+  "given_name": "Bob",
+  "family_name": "Muster"
+}

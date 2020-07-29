@@ -35,6 +35,17 @@ def mock_ldap_settings
   allow(AuthConfig).to receive(:ldap_settings).and_return(ldap_settings).at_least(:once)
 end
 
+def update_token(token)
+  parsed_token = JSON.parse(token)
+  access_token = Keycloak::Client.decoded_access_token(parsed_token['access_token']).first
+  refresh_token = Keycloak::Client.decoded_access_token(parsed_token['refresh_token']).first
+  rsa_private = OpenSSL::PKey::RSA.generate 2048
+  access_token['iat'] = refresh_token['iat'] = Time.zone.now.to_i
+  parsed_token['access_token'] = JWT.encode(access_token, rsa_private, 'RS256')
+  parsed_token['refresh_token'] = JWT.encode(refresh_token, rsa_private, 'RS256')
+  parsed_token.to_json
+end
+
 def ldap_settings
   {
     bind_dn: 'example_bind_dn',

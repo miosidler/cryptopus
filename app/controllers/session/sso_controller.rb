@@ -10,13 +10,20 @@ class Session::SsoController < SessionController
   layout 'session', only: :inactive
 
   def create
-    cookies.permanent[:keycloak_token] = user_authenticator.token(params) if params[:code].present?
-
-    unless user_authenticator.authenticate!
+    if !params.key?(:code) && cookies[:keycloak_token].nil?
       return redirect_to user_authenticator.keycloak_login
     end
 
-    unless create_session(keycloak_client.user_pk_secret(nil, access_token))
+    if params.key?(:code)
+      Current.token = Keycloak::Token.issue!(params[:code], sso_url)
+      cookies.permanent[:keycloak_token] = Current.json_token
+    end
+
+    unless user_authenticator.authenticate!
+      return redirect_to user_authenticator.login_path
+    end
+
+    unless create_session(keycloak_client.user_pk_secret(nil, Current.token.raw['access_token']))
       return redirect_if_decryption_error
     end
 
@@ -36,23 +43,17 @@ class Session::SsoController < SessionController
     redirect_to user_authenticator.keycloak_login
   end
 
-  def authorize_action
-    authorize :sso
-  end
-
   def reset_session_before_redirect
-    jumpto = params[:jumpto]
+    jumpto = session[:jumpto]
     reset_session
     session[:jumpto] = jumpto
   end
 
-  def keycloak_client
-    @keycloak_client ||= KeycloakClient.new
+  def authorize_action
+    authorize :sso
   end
 
-  def access_token
-    return if cookies.nil? || cookies['keycloak_token'].nil?
-
-    JSON.parse(cookies['keycloak_token']).try(:[], 'access_token')
+  def keycloak_client
+    @keycloak_client ||= KeycloakClient.new
   end
 end

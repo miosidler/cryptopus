@@ -8,38 +8,25 @@ describe Authentication::UserAuthenticator::Sso do
     enable_keycloak
   end
 
+  let(:token_bob) { Rails.root.join('spec/fixtures/files/auth/keycloak_token_bob.json').read }
+  let(:token_ben) { Rails.root.join('spec/fixtures/files/auth/keycloak_token_ben.json').read }
+
   context 'keycloak' do
     it 'create user from Keycloak' do
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .twice
-        .with('sub', 'asd')
-        .and_return('aw123')
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('given_name', 'asd')
-        .and_return('Ben')
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('preferred_username', 'asd')
-        .and_return('ben')
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('family_name', 'asd')
-        .and_return('Meier')
-      expect(Keycloak::Client).to receive(:get_attribute)
-        .with('pk_secret_base', 'asd')
-        .and_return(nil)
-      expect(Keycloak::Admin).to receive(:update_user)
-        .and_return(true)
+      # expect(Keycloak::Admin).to receive(:update_user)
+      #   .and_return(true)
       expect(Keycloak::Client).to receive(:user_signed_in?)
         .twice
         .and_return(true)
-      expect(Keycloak::Admin).to receive(:get_user)
-        .and_return('{}')
-      expect(Keycloak::Client).to receive(:get_token_by_client_credentials)
-        .and_return('{ "access_token": "asd" }')
+      # TODO create test with pk_secret_base creation
+      # expect(Keycloak::Admin).to receive(:get_user)
+      #   .and_return('{}')
+      # expect(Keycloak::Client).to receive(:get_token_by_client_credentials)
+      #   .and_return(token_ben)
+
+      Current.token = Keycloak::Token.new(JSON.parse(token_ben))
 
       @username = 'ben'
-
-      @cookies = {}
-      @cookies['keycloak_token'] = { access_token: 'asd' }.to_json
 
       expect(authenticate!).to be true
       user = User.find_by(username: 'ben')
@@ -47,7 +34,7 @@ describe Authentication::UserAuthenticator::Sso do
       expect(user.username).to eq('ben')
       expect(user.givenname).to eq('Ben')
       expect(user.surname).to eq('Meier')
-      expect(user.provider_uid).to eq('aw123')
+      expect(user.provider_uid).to eq('ccbcd948-43a1-4dcb-8504-ca5db7148642')
     end
 
     it 'doesn\'t authenticate root' do
@@ -71,7 +58,7 @@ describe Authentication::UserAuthenticator::Sso do
 
   def authenticator
     @authenticator ||= Authentication::UserAuthenticator.init(
-      username: @username, password: @password, cookies: @cookies
+      username: @username, password: @password
     )
   end
 

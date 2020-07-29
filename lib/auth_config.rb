@@ -13,6 +13,10 @@ class AuthConfig
       auth_config.ldap.dup
     end
 
+    def keycloak_settings
+      auth_config.keycloak.dup
+    end
+
     def keycloak_enabled?
       auth_config.keycloak?
     end
@@ -48,6 +52,10 @@ class AuthConfig
 
   def ldap
     settings_file[:ldap]
+  end
+
+  def keycloak
+    settings_file[:keycloak]
   end
 
   private

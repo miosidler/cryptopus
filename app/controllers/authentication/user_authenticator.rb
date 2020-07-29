@@ -17,11 +17,10 @@ class Authentication::UserAuthenticator
     end
   end
 
-  def initialize(username: nil, password: nil, cookies: nil)
+  def initialize(username: nil, password: nil)
     @authenticated = false
     @username = username
     @password = password
-    @cookies = cookies
   end
 
   def authenticate!

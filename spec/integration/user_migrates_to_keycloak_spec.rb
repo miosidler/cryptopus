@@ -11,6 +11,8 @@ describe 'User migrates to keycloak spec' do
     @pk_secret_base = SecureRandom.base64(32)
   end
 
+  let(:token_bob) { Rails.root.join('spec/fixtures/files/auth/keycloak_token_bob.json').read }
+
   it 'migrates db bob to keycloak' do
     # Mock
     expect(Keycloak::Client)
@@ -21,29 +23,10 @@ describe 'User migrates to keycloak spec' do
     expect(Keycloak::Client)
       .to receive(:get_token_by_code)
       .at_least(:once)
-      .and_return(token)
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('sub', 'token')
-      .at_least(:once)
-      .and_return('asdQW123-asdQWE')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('preferred_username', 'token')
-      .at_least(:once)
-      .and_return('bob')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('given_name', 'token')
-      .at_least(:once)
-      .and_return('Bob')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('family_name', 'token')
-      .at_least(:once)
-      .and_return('Meister')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('pk_secret_base', 'token')
-      .at_least(:once)
-      .and_return(@pk_secret_base)
+      .and_return(token_bob)
     expect(Keycloak::Client).to receive(:user_signed_in?)
-      .and_return(false, true, true, true, true, true, true, true)
+      .at_least(:once)
+      .and_return(true)
 
     # login
     get root_path
@@ -51,7 +34,6 @@ describe 'User migrates to keycloak spec' do
     expect(request.fullpath).to eq('/session/sso')
     follow_redirect!
     expect(request.fullpath).to eq('/session/sso?code=asd')
-    follow_redirect!
     follow_redirect!
     expect(request.fullpath).to eq('/recrypt/sso')
     post recrypt_sso_path, params: { old_password: 'password' }
@@ -74,29 +56,10 @@ describe 'User migrates to keycloak spec' do
     expect(Keycloak::Client)
       .to receive(:get_token_by_code)
       .at_least(:once)
-      .and_return(token)
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('sub', 'token')
-      .at_least(:once)
-      .and_return('asdQW123-asdQWE')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('preferred_username', 'token')
-      .at_least(:once)
-      .and_return('bob')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('given_name', 'token')
-      .at_least(:once)
-      .and_return('Bob')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('family_name', 'token')
-      .at_least(:once)
-      .and_return('Meister')
-    expect(Keycloak::Client).to receive(:get_attribute)
-      .with('pk_secret_base', 'token')
-      .at_least(:once)
-      .and_return(@pk_secret_base)
+      .and_return(token_bob)
     expect(Keycloak::Client).to receive(:user_signed_in?)
-      .and_return(false, true, true, true, true, true, true, true)
+      .at_least(:once)
+      .and_return(true)
 
     # login
     get root_path
@@ -104,7 +67,6 @@ describe 'User migrates to keycloak spec' do
     expect(request.fullpath).to eq('/session/sso')
     follow_redirect!
     expect(request.fullpath).to eq('/session/sso?code=asd')
-    follow_redirect!
     follow_redirect!
     expect(request.fullpath).to eq('/recrypt/sso')
     post recrypt_sso_path, params: { old_password: 'password' }
@@ -114,14 +76,5 @@ describe 'User migrates to keycloak spec' do
     # Adjust test to new start-page:
     expect(request.fullpath).to eq(root_path)
     expect(response.body).to match(/<div id='ember'><\/div>/)
-  end
-
-  private
-
-  def token
-    { access_token: 'token',
-      expires_in: 300,
-      refresh_expires_in: 1800,
-      refresh_token: 'refresh_token' }.to_json
   end
 end
