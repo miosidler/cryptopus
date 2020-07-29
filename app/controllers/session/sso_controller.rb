@@ -7,19 +7,19 @@
 
 class Session::SsoController < SessionController
 
-  before_action :keycloak_cookie
+  layout 'session', only: :inactive
 
   def create
     cookies.permanent[:keycloak_token] = user_authenticator.token(params) if params[:code].present?
+
     unless user_authenticator.authenticate!
       return redirect_to user_authenticator.keycloak_login
     end
 
-    unless create_session(keycloak_client.user_pk_secret)
+    unless create_session(keycloak_client.user_pk_secret(nil, access_token))
       return redirect_if_decryption_error
     end
 
-    last_login_message
     redirect_after_sucessful_login
   end
 
@@ -46,11 +46,13 @@ class Session::SsoController < SessionController
     session[:jumpto] = jumpto
   end
 
-  def keycloak_cookie
-    Keycloak.proc_cookie_token = -> { cookies.permanent[:keycloak_token] }
-  end
-
   def keycloak_client
     @keycloak_client ||= KeycloakClient.new
+  end
+
+  def access_token
+    return if cookies.nil? || cookies['keycloak_token'].nil?
+
+    JSON.parse(cookies['keycloak_token']).try(:[], 'access_token')
   end
 end

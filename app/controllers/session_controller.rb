@@ -16,9 +16,8 @@ class SessionController < ApplicationController
 
   before_action :authorize_action
   before_action :skip_authorization, only: [:create, :new, :destroy, :sso]
-  before_action :keycloak_cookie, only: :sso
 
-  layout false
+  layout 'session', only: :new
 
   def create
     unless user_authenticator.authenticate!
@@ -129,10 +128,6 @@ class SessionController < ApplicationController
 
   def authorize_action
     authorize :session
-  end
-
-  def keycloak_cookie
-    Keycloak.proc_cookie_token = -> { cookies.permanent[:keycloak_token] }
   end
 
   def keycloak_client
