@@ -2,9 +2,12 @@ import Component from "@glimmer/component";
 import { action } from "@ember/object";
 import { tracked } from "@glimmer/tracking";
 import { inject as service } from "@ember/service";
+import ENV from "../config/environment";
+
 
 export default class TeamShowComponent extends Component {
   @service navService;
+  @service userService;
   @service store;
   @service router;
 
@@ -54,7 +57,7 @@ export default class TeamShowComponent extends Component {
     fetch(`/api/teams/${this.args.team.id}/favourite`, {
       method: httpMethod,
       headers: {
-        "X-CSRF-Token": $('meta[name="csrf-token"]').attr("content")
+        "X-CSRF-Token": ENV.CSRFToken
       }
     }).then(() => {
       this.args.team.favourised = !this.args.team.favourised;

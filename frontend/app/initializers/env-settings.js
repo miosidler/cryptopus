@@ -9,9 +9,12 @@ export function initialize(/* application */) {
       success: function(envSettings) {
         ENV.sentryDsn = envSettings.sentry;
         ENV.currentUserId = envSettings.current_user.id;
+        ENV.currentUserRole = envSettings.current_user.role;
         ENV.currentUserGivenname = envSettings.current_user.givenname;
         ENV.preferredLocale = envSettings.current_user.preferred_locale;
+        ENV.lastLoginMessage = envSettings.last_login_message;
         ENV.appVersion = envSettings.version;
+        ENV.CSRFToken = envSettings.csrf_token;
       }
     });
     /* eslint-enable no-undef  */
