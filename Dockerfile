@@ -22,7 +22,7 @@ USER 1001
 
 # make sure unique secret key is set by operator
 ENV NODE_ENV=production
-ENV SECRET_KEY_BASE=
+ENV SECRET_KEY_BASE=change-me
 ENV RAILS_SERVE_STATIC_FILES=1
 ENV RAILS_LOG_TO_STDOUT=1
 
