@@ -64,9 +64,9 @@
         </dd.toggle>
         <dd.menu as |ddm|>
           <ddm.item>
-            <a role="button" class="dropdown-item" href="/admin/settings/index">
+            <LinkTo role="button" class="dropdown-item" @route="admin.settings">
               {{ t "settings" }}
-            </a>
+            </LinkTo>
           </ddm.item>
           <ddm.item>
             <LinkTo role="button" class="dropdown-item administration-dropdown" @route="admin.users">
