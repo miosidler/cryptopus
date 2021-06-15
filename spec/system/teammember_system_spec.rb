@@ -59,7 +59,6 @@ describe 'Teammember', type: :system, js: true do
     # click_link 'Api Users'
     #
     # within('#api-users') do
-    #   require 'pry'; binding.pry;
     #   expect('.tab-pane #api-users').to be_present
     #
     #   api_user = users(:admin).api_users.first

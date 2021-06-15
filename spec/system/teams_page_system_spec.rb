@@ -18,7 +18,7 @@ describe 'TeamsPage', type: :system, js: true do
     login_as_user(:bob)
 
     account1 = accounts(:account1)
-    
+
     expect(page).to have_selector('input.search')
     find('input.search', visible: false).set account1.accountname
     expect(page).to have_text(account1.accountname)

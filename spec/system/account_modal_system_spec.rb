@@ -54,8 +54,6 @@ describe 'AccountModal', type: :system, js: true do
 
     fill_modal(account_attrs)
 
-    require "pry"; binding.pry
-    
     expect do
       click_button('Save', visible: false)
       expect(page).to have_text(account_attrs[:accountname])
