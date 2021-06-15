@@ -21,18 +21,18 @@ describe 'QuickSearch', type: :system, js: true do
   let(:account1) { accounts(:account1) }
 
   it 'search with not available keyword does not show any results' do
-    expect(find('input#search')['placeholder']).to eq('Type to search...')
-    expect(page).to have_selector('input#search')
+    expect(find('pzsh-topbar input.search')['placeholder']).to eq('Type to search...')
+    expect(page).to have_selector('pzsh-topbar input.search')
 
-    find('input#search').set 'lkj'
+    find('pzsh-topbar input.search').set 'lkj'
     expect(page).to have_no_css('li.result')
   end
 
   it 'search and access account' do
-    expect(find('input#search')['placeholder']).to eq('Type to search...')
-    expect(page).to have_selector('input#search')
+    expect(find('pzsh-topbar input.search')['placeholder']).to eq('Type to search...')
+    expect(page).to have_selector('pzsh-topbar input.search')
 
-    find('input#search').set account1.accountname
+    find('pzsh-topbar input.search').set account1.accountname
     expect(page).to have_selector('.account-entry')
     within('div.account-entry') do
       expect(page).to have_content(account1.accountname)
