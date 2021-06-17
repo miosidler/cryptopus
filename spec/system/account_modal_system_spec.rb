@@ -53,7 +53,7 @@ describe 'AccountModal', type: :system, js: true do
     expect(find("input[name='cleartextPassword']", visible: false)['autocomplete']).to eq 'off'
 
     fill_modal(account_attrs)
-
+    
     expect do
       click_button('Save', visible: false)
       expect(page).to have_text(account_attrs[:accountname])
